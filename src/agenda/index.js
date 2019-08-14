@@ -82,7 +82,9 @@ export default class AgendaView extends Component {
     /** Set this true while waiting for new data from a refresh. */
     refreshing: PropTypes.bool,
     /** Display loading indicador. Default = false */
-    displayLoadingIndicator: PropTypes.bool
+    displayLoadingIndicator: PropTypes.bool,
+    /** props passed to ReservationsList Component */
+    ReservationsListProps: PropTypes.object,
   };
 
   constructor(props) {
@@ -297,6 +299,7 @@ export default class AgendaView extends Component {
         onScroll={() => {}}
         ref={(c) => this.list = c}
         theme={this.props.theme}
+        {...this.props.ReservationsListProps}
       />
     );
   }

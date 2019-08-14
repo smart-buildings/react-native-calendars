@@ -193,6 +193,7 @@ class ReactComp extends Component {
     }
     return (
       <FlatList
+        {...this.props}
         ref={(c) => this.list = c}
         style={this.props.style}
         contentContainerStyle={this.styles.content}
