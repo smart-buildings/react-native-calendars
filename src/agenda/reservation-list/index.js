@@ -7,6 +7,7 @@ import {
 import Reservation from './reservation';
 import PropTypes from 'prop-types';
 import XDate from 'xdate';
+import {parseDate} from '../../interface';
 
 import dateutils from '../../dateutils';
 import styleConstructor from './style';
@@ -151,6 +152,43 @@ class ReactComp extends Component {
     this.scrollOver = true;
   }
 
+  _onRefresh = (...args) => {
+    this.props.onRefresh(...args);
+
+    let h = 0;
+    let scrollPosition = 0;
+    const selectedDay = this.props.selectedDay.clone();
+    const iterator = parseDate(this.props.selectedDay.clone().getTime()-3600*24*10*1000);
+    let reservations = [];
+    for (let i = 0; i < 10; i++) {
+      const res = this.getReservationsForDay(iterator, this.props);
+      if (res) {
+        reservations = reservations.concat(res);
+      }
+      iterator.addDays(1);
+    }
+    scrollPosition = reservations.length;
+    for (let i = 10; i < 30; i++) {
+      const res = this.getReservationsForDay(iterator, this.props);
+      if (res) {
+        reservations = reservations.concat(res);
+      }
+      iterator.addDays(1);
+    }
+    this.setState({
+      reservations
+    }, () => {
+      setTimeout(() => {
+        let h = 0;
+        for (let i = 0; i < scrollPosition; i++) {
+          h += this.heights[i] || 0;
+        }
+        this.list.scrollToOffset({offset: h, animated: false});
+        this.props.onDayChange(selectedDay, false);
+      }, 100);
+    });
+  }
+
   getReservations(props) {
     if (!props.reservations || !props.selectedDay) {
       return {reservations: [], scrollPosition: 0};
@@ -206,7 +244,7 @@ class ReactComp extends Component {
         keyExtractor={(item, index) => String(index)}
         refreshControl={this.props.refreshControl}
         refreshing={this.props.refreshing || false}
-        onRefresh={this.props.onRefresh}
+        onRefresh={this._onRefresh}
       />
     );
   }
