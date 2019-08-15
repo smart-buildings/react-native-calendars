@@ -153,7 +153,9 @@ class ReactComp extends Component {
   }
 
   _onRefresh = (...args) => {
-    this.props.onRefresh(...args);
+    if (this.props.onRefresh) {
+      this.props.onRefresh(...args);
+    }
 
     let h = 0;
     let scrollPosition = 0;
