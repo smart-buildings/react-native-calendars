@@ -45,6 +45,15 @@ export default function styleConstructor(theme = {}) {
       marginTop: 104,
       backgroundColor: appStyle.backgroundColor
     },
+    smallAction: {
+      position: 'absolute',
+      bottom: 0,
+      height: 33,
+      backgroundColor: 'white',
+      left: 0,
+      right: 0,
+      zIndex: 3,
+    },
     ...(theme[STYLESHEET_ID] || {})
   });
 }

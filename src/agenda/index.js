@@ -11,7 +11,7 @@ import styleConstructor from './style';
 import {VelocityTracker} from '../input';
 
 
-const HEADER_HEIGHT = 104;
+const HEADER_HEIGHT = 119;
 const KNOB_HEIGHT = 24;
 //Fallback when RN version is < 0.44
 const viewPropTypes = ViewPropTypes || View.propTypes;
@@ -432,6 +432,11 @@ export default class AgendaView extends Component {
             />
           </Animated.View>
           {knob}
+          {this.props.smallAction && (
+            <View style={this.styles.smallAction}>
+              {this.props.smallAction}
+            </View>
+          )}
         </Animated.View>
         <Animated.View style={weekdaysStyle}>
           {this.props.showWeekNumbers && <Text allowFontScaling={false} style={this.styles.weekday} numberOfLines={1}></Text>}
