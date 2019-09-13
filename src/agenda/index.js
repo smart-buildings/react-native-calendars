@@ -328,7 +328,7 @@ export default class AgendaView extends Component {
             this.handleToggle()
             return;
           }
-          if (this.state.expanded && scrollposition > CALENDAR_TOGGLE_THRESHOLD) {
+          if (this.state.expanded && scrollposition > CALENDAR_TOGGLE_THRESHOLD / 2.5) {
             this.handleToggle()
           }
         }}
