@@ -14,10 +14,10 @@ export default function platformStyles(appStyle) {
       top: 0,
       flexDirection: 'row',
       justifyContent: 'space-around',
+      zIndex: 1,
       marginLeft: 15,
       marginRight: 15,
-      paddingTop: 15,
-      paddingBottom: 7,
+      paddingTop: 8,
       backgroundColor: appStyle.calendarBackground
     },
   };
