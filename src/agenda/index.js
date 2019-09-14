@@ -125,7 +125,7 @@ export default class AgendaView extends Component {
     this.state.calendarContainerHeight.addListener(() => {
       if (!this.verticalScrollRef) return
       const current = xdateToData(this.currentMonth);
-      const currentWeek = Math.floor(current.day / 7) + 1;
+      const currentWeek = (current.day % 7 === 0) ? current.day / 7 : Math.floor(current.day / 7) + 1;
       const currentWeekOffset = currentWeek * WEEK_ROW_HEIGHT;
 
       const EXPANDED_HEIGHT = 322;
