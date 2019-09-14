@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { Text, View, Dimensions, Animated, ScrollView, ViewPropTypes, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import XDate from 'xdate';
+import memoizeOne from 'memoize-one';
 
-import { parseDate, xdateToData } from '../interface';
+import { parseDate, xdateToData, padNumber } from '../interface';
 import dateutils from '../dateutils';
 import CalendarList from '../calendar-list';
 import ReservationsList from './reservation-list';
@@ -109,6 +110,7 @@ export default class AgendaView extends Component {
       selectedDay: parseDate(this.props.selected) || XDate(true),
       topDay: parseDate(this.props.selected) || XDate(true),
       calendarContainerHeight: new Animated.Value(0),
+      expanded: false,
     };
 
     this.currentMonth = this.state.selectedDay.clone();
@@ -124,9 +126,9 @@ export default class AgendaView extends Component {
 
     this.state.calendarContainerHeight.addListener(() => {
       if (!this.verticalScrollRef) return
-      const current = xdateToData(this.currentMonth);
-      const currentWeek = (current.day % 7 === 0) ? current.day / 7 : Math.floor(current.day / 7) + 1;
-      const currentWeekOffset = currentWeek * WEEK_ROW_HEIGHT;
+
+      const selectedDay = xdateToData(this.state.selectedDay);
+      const currentWeekOffset = this.memoizedOffset(selectedDay.dateString);
 
       const EXPANDED_HEIGHT = 322;
       const target = this.state.calendarContainerHeight.interpolate({
@@ -139,6 +141,14 @@ export default class AgendaView extends Component {
       this.verticalScrollRef.scrollTo({ y, animated: false });
     });
   }
+
+  calculateWeekOffset = (dateString) => {
+    const current = xdateToData(parseDate(dateString));
+    const currentWeek = (current.day % 7 === 0) ? current.day / 7 : Math.floor(current.day / 7) + 1;
+    return currentWeekOffset = currentWeek * WEEK_ROW_HEIGHT;
+  };
+
+  memoizedOffset = memoizeOne(this.calculateWeekOffset);
 
   componentWillUnmount = () => {
     this.state.scrollY.removeAllListeners();
@@ -218,7 +228,11 @@ export default class AgendaView extends Component {
       clearTimeout(this.scrollTimeout);
       this.scrollTimeout = setTimeout(() => {
         if (this.props.loadItemsForMonth && this._isMounted) {
-          this.props.loadItemsForMonth(months[0]);
+          const month = months[0];
+          const isCurrentMonth = dateutils.sameDate(parseDate(month.dateString), XDate())
+          const scrollToDay = isCurrentMonth ? month.dateString : `${month.year}-${padNumber(month.month)}-01`;
+          this.chooseDay(scrollToDay)
+          this.props.loadItemsForMonth(month);
         }
       }, 200);
     }
@@ -382,6 +396,9 @@ export default class AgendaView extends Component {
     const agendaHeight = Math.max(0, this.viewHeight - MINIMISED_CALENDAR_HEIGHT);
     const weekDaysNames = dateutils.weekDayNames(this.props.firstDay);
 
+    const selectedDay = xdateToData(this.state.selectedDay);
+    const currentWeekOffset = this.memoizedOffset(selectedDay.dateString);
+
     const weekdaysStyle = [this.styles.weekdays, {
       opacity: this.state.scrollY.interpolate({
         inputRange: [0, MAXIMISED_CALENDAR_HEIGHT],
@@ -391,7 +408,8 @@ export default class AgendaView extends Component {
       transform: [{
         translateY: this.state.scrollY.interpolate({
           inputRange: [0, MAXIMISED_CALENDAR_HEIGHT],
-          outputRange: [96, -MINIMISED_CALENDAR_HEIGHT],
+          // show weekdays for all week rows except first one
+          outputRange: [currentWeekOffset === WEEK_ROW_HEIGHT ? 0 : currentWeekOffset, -MINIMISED_CALENDAR_HEIGHT],
           extrapolate: 'clamp'
         })
       }]
@@ -458,6 +476,7 @@ export default class AgendaView extends Component {
             <CalendarList
               horizontal
               pagingEnabled
+              scrollEnabled={this.state.expanded}
               theme={this.props.theme}
               calendarWidth={this.viewWidth}
               ref={(c) => this.calendar = c}

@@ -37,6 +37,7 @@ function parseDate(d) {
 }
 
 module.exports = {
+  padNumber,
   xdateToData,
   parseDate
 };
