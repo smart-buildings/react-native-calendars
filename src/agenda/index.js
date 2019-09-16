@@ -322,6 +322,16 @@ export default class AgendaView extends Component {
     }
   }
 
+  handleListScroll = (scrollposition) => {
+    if (!this.state.expanded && scrollposition < -CALENDAR_TOGGLE_THRESHOLD) {
+      this.handleToggle()
+      return;
+    }
+    if (this.state.expanded && scrollposition > CALENDAR_TOGGLE_THRESHOLD / 2.5) {
+      this.handleToggle()
+    }
+  };
+
   renderReservations() {
     return (
       <ReservationsList
@@ -337,15 +347,7 @@ export default class AgendaView extends Component {
         renderEmptyData={this.props.renderEmptyData}
         topDay={this.state.topDay}
         onDayChange={this.onDayChange.bind(this)}
-        onScroll={(scrollposition) => {
-          if (!this.state.expanded && scrollposition < -CALENDAR_TOGGLE_THRESHOLD) {
-            this.handleToggle()
-            return;
-          }
-          if (this.state.expanded && scrollposition > CALENDAR_TOGGLE_THRESHOLD / 2.5) {
-            this.handleToggle()
-          }
-        }}
+        onScroll={this.handleListScroll}
         ref={(c) => this.list = c}
         theme={this.props.theme}
         {...this.props.ReservationsListProps}

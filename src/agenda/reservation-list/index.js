@@ -89,23 +89,25 @@ class ReactComp extends Component {
 
   onScroll(event) {
     const yOffset = event.nativeEvent.contentOffset.y;
-    this.props.onScroll(yOffset);
-    let topRowOffset = 0;
-    let topRow;
-    for (topRow = 0; topRow < this.heights.length; topRow++) {
-      if (topRowOffset + this.heights[topRow] / 2 >= yOffset) {
-        break;
-      }
-      topRowOffset += this.heights[topRow];
+    if (this.props.onScroll) {
+      this.props.onScroll(yOffset);
     }
-    const row = this.state.reservations[topRow];
-    if (!row) return;
-    const day = row.day;
-    const sameDate = dateutils.sameDate(day, this.selectedDay);
-    if (!sameDate && this.scrollOver) {
-      this.selectedDay = day.clone();
-      this.props.onDayChange(day.clone());
-    }
+    // let topRowOffset = 0;
+    // let topRow;
+    // for (topRow = 0; topRow < this.heights.length; topRow++) {
+    //   if (topRowOffset + this.heights[topRow] / 2 >= yOffset) {
+    //     break;
+    //   }
+    //   topRowOffset += this.heights[topRow];
+    // }
+    // const row = this.state.reservations[topRow];
+    // if (!row) return;
+    // const day = row.day;
+    // const sameDate = dateutils.sameDate(day, this.selectedDay);
+    // if (!sameDate && this.scrollOver) {
+    //   this.selectedDay = day.clone();
+    //   this.props.onDayChange(day.clone());
+    // }
   }
 
   onRowLayoutChange(ind, event) {
@@ -204,7 +206,7 @@ class ReactComp extends Component {
         data={this.state.reservations}
         onScroll={this.onScroll.bind(this)}
         showsVerticalScrollIndicator={false}
-        scrollEventThrottle={200}
+        scrollEventThrottle={16}
         ListHeaderComponent={!this.props.reservations[this.props.selectedDay.toString('yyyy-MM-dd')] && this.props.renderEmptyData && (
           this.props.renderEmptyData()
         )}
