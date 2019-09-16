@@ -23,14 +23,16 @@ export default function styleConstructor(theme = {}) {
       borderColor: appStyle.separatorColor
     },
     knobContainer: {
-      flex: 1,
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      height: 24,
+      flexDirection: 'row',
+      backgroundColor: appStyle.calendarBackground,
+      paddingBottom: 4,
       bottom: 0,
+      width: '100%',
+      justifyContent: 'space-between',
       alignItems: 'center',
-      backgroundColor: appStyle.calendarBackground
+      height: 24,
+      zIndex: 1,
+      position: 'absolute',
     },
     weekday: {
       width: 32,

@@ -12,8 +12,8 @@ import styleConstructor from './style';
 import { VelocityTracker } from '../input';
 
 
-const MINIMISED_CALENDAR_HEIGHT = 74;
-const MAXIMISED_CALENDAR_HEIGHT = 400;
+const MINIMISED_CALENDAR_HEIGHT = 94;
+const MAXIMISED_CALENDAR_HEIGHT = 404;
 const WEEK_ROW_HEIGHT = 48;
 const CALENDAR_TOGGLE_THRESHOLD = 15;
 const KNOB_HEIGHT = 24;
@@ -288,6 +288,10 @@ export default class AgendaView extends Component {
     this.calendar.scrollToDay(this.state.selectedDay, this.calendarOffset() + 1, true);
   }
 
+  handlePressResetDay = () => {
+    this.chooseDay(this.currentMonth)
+  }
+
   _chooseDayFromCalendar(d) {
     this.chooseDay(d, !this.state.calendarScrollable);
   }
@@ -455,6 +459,17 @@ export default class AgendaView extends Component {
     return (
       <View onLayout={this.onLayout} style={[this.props.style, { flex: 1, overflow: 'hidden' }]}>
         <Animated.View style={{ height: headerHeight }}>
+
+          <Animated.View style={this.styles.knobContainer}>
+            <TouchableOpacity onPress={this.handlePressResetDay}>
+              <Text style={{ color: '#367eb2', paddingHorizontal: 16 }}>Today</Text>
+            </TouchableOpacity>
+            <View style={this.styles.knob} />
+            <TouchableOpacity onPress={this.props.onPressRefresh}>
+              <Text style={{ color: '#367eb2', paddingHorizontal: 16 }}>Refresh</Text>
+            </TouchableOpacity>
+          </Animated.View>
+
           <ScrollView
             bounces={false}
             ref={(instance) => this.verticalScrollRef = instance}
@@ -505,12 +520,6 @@ export default class AgendaView extends Component {
             // }}
             />
           </ScrollView>
-          {/* {knob}
-          {this.props.smallAction && (
-            <View style={[this.styles.smallAction, { zIndex: 100 }]}>
-              {this.props.smallAction}
-            </View>
-          )} */}
         </Animated.View>
         <View style={this.styles.reservations}>
           {this.renderReservations()}
