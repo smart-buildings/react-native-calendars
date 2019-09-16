@@ -25,7 +25,6 @@ export default function styleConstructor(theme = {}) {
     knobContainer: {
       flexDirection: 'row',
       backgroundColor: appStyle.calendarBackground,
-      paddingBottom: 4,
       bottom: 0,
       width: '100%',
       justifyContent: 'space-between',

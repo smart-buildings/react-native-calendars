@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Dimensions, Animated, ScrollView, ViewPropTypes, TouchableOpacity } from 'react-native';
+import { Text, View, Dimensions, Animated, ScrollView, ViewPropTypes, TouchableOpacity, PanResponder } from 'react-native';
 import PropTypes from 'prop-types';
 import XDate from 'xdate';
 import memoizeOne from 'memoize-one';
@@ -12,7 +12,7 @@ import styleConstructor from './style';
 import { VelocityTracker } from '../input';
 
 
-const MINIMISED_CALENDAR_HEIGHT = 94;
+const MINIMISED_CALENDAR_HEIGHT = 96;
 const MAXIMISED_CALENDAR_HEIGHT = 404;
 const WEEK_ROW_HEIGHT = 48;
 const CALENDAR_TOGGLE_THRESHOLD = 15;
@@ -149,6 +149,17 @@ export default class AgendaView extends Component {
   };
 
   memoizedOffset = memoizeOne(this.calculateWeekOffset);
+
+  knobPanResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onStartShouldSetPanResponderCapture: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponderCapture: () => true,
+    onPanResponderMove: (evt, gestureState) => {
+      const negatedDistance = -gestureState.dy;
+      this.handleListScroll(negatedDistance);
+    },
+  });
 
   componentWillUnmount = () => {
     this.state.scrollY.removeAllListeners();
@@ -289,7 +300,7 @@ export default class AgendaView extends Component {
   }
 
   handlePressResetDay = () => {
-    this.chooseDay(this.currentMonth)
+    this.calendar.scrollToDay(this.currentMonth.clone(), this.calendarOffset(), true);
   }
 
   _chooseDayFromCalendar(d) {
@@ -462,11 +473,13 @@ export default class AgendaView extends Component {
 
           <Animated.View style={this.styles.knobContainer}>
             <TouchableOpacity onPress={this.handlePressResetDay}>
-              <Text style={{ color: '#367eb2', paddingHorizontal: 16 }}>Today</Text>
+              <Text style={{ color: '#367eb2', paddingHorizontal: 16, paddingBottom: 4 }}>Today</Text>
             </TouchableOpacity>
-            <View style={this.styles.knob} />
+            <View style={{ flex: 1, height: '100%', alignItems: 'center', justifyContent: 'center' }} {...this.knobPanResponder.panHandlers}>
+              <View style={this.styles.knob} />
+            </View>
             <TouchableOpacity onPress={this.props.onPressRefresh}>
-              <Text style={{ color: '#367eb2', paddingHorizontal: 16 }}>Refresh</Text>
+              <Text style={{ color: '#367eb2', paddingHorizontal: 16, paddingBottom: 4 }}>Refresh</Text>
             </TouchableOpacity>
           </Animated.View>
 
