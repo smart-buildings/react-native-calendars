@@ -515,9 +515,9 @@ export default class AgendaView extends Component {
         <View style={this.styles.reservations}>
           {this.renderReservations()}
         </View>
-        <TouchableOpacity onPress={this.handleToggle} style={{ position: 'absolute', bottom: 0 }}>
+        {/* <TouchableOpacity onPress={this.handleToggle} style={{ position: 'absolute', bottom: 0 }}>
           <Text>collapse</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/* <Animated.ScrollView
           ref={c => this.scrollPad = c}
           overScrollMode='never'
