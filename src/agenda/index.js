@@ -168,7 +168,7 @@ export default class AgendaView extends Component {
 
   calendarOffset() {
     // return 90 - (this.viewHeight / 2);
-    return 10
+    return 0;
   }
 
   initialScrollPadPosition() {
@@ -301,6 +301,7 @@ export default class AgendaView extends Component {
 
   handlePressResetDay = () => {
     this.calendar.scrollToDay(this.currentMonth.clone(), this.calendarOffset(), true);
+    this.chooseDay(this.currentMonth);
   }
 
   _chooseDayFromCalendar(d) {
